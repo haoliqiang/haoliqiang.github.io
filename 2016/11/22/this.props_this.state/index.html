@@ -1,0 +1,966 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="react," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="以下分享来自团队童鞋yangjun
+
+React是单向数据流，数据主要从父节点通过props传递到子节点。
+如果顶层（父级）的某个props改变了，React会重渲染所有的子节点。
+通常使用props当做数据源，state用来存放状态值（简单的数据）。
+通常用props传递大量数据，state用于存放组件内部一些简单的定义数据。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react中的this.props_this.state详解">
+<meta property="og:url" content="http://haoliqiang.github.io/2016/11/22/this.props_this.state/index.html">
+<meta property="og:site_name" content="plot‘blog">
+<meta property="og:description" content="以下分享来自团队童鞋yangjun
+
+React是单向数据流，数据主要从父节点通过props传递到子节点。
+如果顶层（父级）的某个props改变了，React会重渲染所有的子节点。
+通常使用props当做数据源，state用来存放状态值（简单的数据）。
+通常用props传递大量数据，state用于存放组件内部一些简单的定义数据。">
+<meta property="og:updated_time" content="2017-01-08T09:29:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="react中的this.props_this.state详解">
+<meta name="twitter:description" content="以下分享来自团队童鞋yangjun
+
+React是单向数据流，数据主要从父节点通过props传递到子节点。
+如果顶层（父级）的某个props改变了，React会重渲染所有的子节点。
+通常使用props当做数据源，state用来存放状态值（简单的数据）。
+通常用props传递大量数据，state用于存放组件内部一些简单的定义数据。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://haoliqiang.github.io/2016/11/22/this.props_this.state/"/>
+
+
+  <title> react中的this.props_this.state详解 | plot‘blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?79c07a1e92fcb04362ad9d2d65bc3e40";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">plot‘blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">f2e</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'LzdXF9WGQnKUybZS6zWB','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                react中的this.props_this.state详解
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-22T00:00:00+08:00" content="2016-11-22">
+              2016-11-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/react/" itemprop="url" rel="index">
+                    <span itemprop="name">react</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/22/this.props_this.state/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/22/this.props_this.state/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/11/22/this.props_this.state/" class="leancloud_visitors" data-flag-title="react中的this.props_this.state详解">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>以下分享来自团队童鞋<a href="https://git.oschina.net/yangjun_123" target="_blank" rel="external">yangjun</a></p>
+<ul>
+<li>React是单向数据流，数据主要从父节点通过props传递到子节点。</li>
+<li>如果顶层（父级）的某个props改变了，React会重渲染所有的子节点。</li>
+<li>通常使用props当做数据源，state用来存放状态值（简单的数据）。</li>
+<li>通常用props传递大量数据，state用于存放组件内部一些简单的定义数据。<a id="more"></a>
+###this.props<br>props是只读的，props用于整个组件树中传递数据和配置。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var MessagesBox = React.createClass(&#123;</div><div class="line">	getDefaultProps:function()&#123;</div><div class="line">		return &#123;title:&quot;我也是死的，没有title传递过来时，我是默认值，读取我！&quot;&#125;</div><div class="line">	&#125;，</div><div class="line">	render:function()&#123;</div><div class="line">		return (</div><div class="line">				&lt;div&gt;&#123;this.props.title&#125;&lt;/div&gt;</div><div class="line">		)</div><div class="line">	&#125;</div><div class="line">&#125;)</div><div class="line">var title=&quot;我是死的，用于props传递！&quot;</div><div class="line">React.render(&lt;MessagesBox title=&#123;title&#125; /&gt;,document.getElementById(&apos;app&apos;));</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<p>(其中title为外部定义的变量，由父组件传递到子组件，由props进行数据的传递即this.props.title获取数据，当父组件没有向子组件传值时可设置getDefaultProps返回值并进行读取)</p>
+<p>#####props中Proptypes验证<br>在开发时使用Proptypes用于验证props传递数据的有效性，数据类型错误时控制台会提示警告（不会报错，也不会阻止代码的后续执行）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">var Propsva = React.createClass(&#123;</div><div class="line">		propTypes: &#123;</div><div class="line">			optionalArray:React.PropTypes.array,</div><div class="line">			optionalBool:React.PropTypes.bool,</div><div class="line">			optionalFunc:React.PropTypes.func,</div><div class="line">			optionalNumber:React.PropTypes.number,</div><div class="line">			optionalObject:React.PropTypes.object,</div><div class="line">			optionalString:React.PropTypes.string,</div><div class="line">		&#125;,</div><div class="line">		getDefaultProps:function()&#123;</div><div class="line">			return &#123;</div><div class="line">				optionalArray:[&quot;我是A&quot;,&quot;我是B&quot;],</div><div class="line">				optionalBool:true,</div><div class="line">				optionalFunc:function(arg)&#123;</div><div class="line">					console.log(arg);</div><div class="line">				&#125;,</div><div class="line">				optionalNumber:100,</div><div class="line">				optionalObject:&#123;</div><div class="line">					object1:&quot;objectvalue1&quot;,</div><div class="line">					object2:&quot;objectvalue2&quot;,</div><div class="line">					object3:&quot;objectvalue3&quot;,</div><div class="line">				&#125;,</div><div class="line">				optionalString:&quot;我的组件&quot;,</div><div class="line">			&#125;;</div><div class="line">		&#125;,</div><div class="line">		render:function()&#123;</div><div class="line">			return (</div><div class="line">				&lt;div&gt;</div><div class="line">					&lt;h2&gt;&#123;this.props.optionalArray&#125;&lt;/h2&gt;</div><div class="line">					&lt;h2&gt;&#123;this.props.optionalBool&#125;&lt;/h2&gt;</div><div class="line">					&lt;h2&gt;&#123;this.props.optionalNumber&#125;&lt;/h2&gt;</div><div class="line">					&lt;h2&gt;&#123;this.props.optionalObject&#125;&lt;/h2&gt;</div><div class="line">					&lt;h2&gt;&#123;this.props.optionalString&#125;&lt;/h2&gt;</div><div class="line">					&lt;h2&gt;&#123;this.props.optionalFunc(&quot;123&quot;)&#125;&lt;/h2&gt;</div><div class="line">				&lt;/div&gt;</div><div class="line">			)</div><div class="line">		&#125;</div><div class="line">&#125;)</div><div class="line">React.render(&lt;Propsva/&gt;,document.getElementById(&quot;app&quot;));</div></pre></td></tr></table></figure></p>
+<p>###this.state<br>每个组件都有属于自己的state，state和props的区别在于前者(state)只存在于组件内部，只能从当前组件调用this.setState修改state值（不可以直接修改this.state！）。</p>
+<blockquote>
+<p>注：一般我们更新子组件都是通过改变state值，更新子组件的props值从而达到更新。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">var MessageBox = React.createClass(&#123;</div><div class="line">	getInitialState:function()&#123;</div><div class="line">		return &#123; num:1 &#125;</div><div class="line">	&#125;,</div><div class="line">	handleClick:function()&#123;</div><div class="line">		this.setState(function(state)&#123;</div><div class="line">			state.num=this.state.num*2</div><div class="line">		&#125;)</div><div class="line">	&#125;,</div><div class="line">	render:function()&#123;	</div><div class="line">		return ( </div><div class="line">			&lt;div&gt;</div><div class="line">				&lt;button onClick=&#123;this.handleClick&#125;&gt;点我改变子组件的值&lt;/button&gt; </div><div class="line">				&lt;Submessage messages=&#123;this.state.num&#125;/&gt;</div><div class="line">			&lt;/div&gt;</div><div class="line">		)</div><div class="line">	&#125;</div><div class="line">&#125;);</div><div class="line">var Submessage = React.createClass(&#123;</div><div class="line">	render:function()&#123;</div><div class="line">		console.log(&quot;渲染&quot;)</div><div class="line">		return (</div><div class="line">			&lt;div&gt;</div><div class="line">				&lt;div&gt;点击按钮num×2&lt;/div&gt;</div><div class="line">				&lt;input type=&quot;text&quot; value=&#123;this.props.messages&#125;/&gt;</div><div class="line">			&lt;/div&gt;</div><div class="line">		)</div><div class="line">	&#125;</div><div class="line">&#125;);</div><div class="line">var messageBox = React.render( &lt;MessageBox/&gt;, document.getElementById(&apos;app&apos;))</div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>这里使用getIniatialState定义一个状态，并通过点击事件改变状态，将改变后的num值通过this.props传递给子组件，当状态改变时，子组件会随着更新并重新渲染</p>
+<p>####组件之间进行沟通</p>
+<ul>
+<li>父子组件沟通<br>通常情况下都是父子组件进行数据沟通<br>1、父组件通过props更新子组件，向上边写的那样<br>　  父组件　→　props　→　子组件<br>2、子组件通过回调函数更新父组件状态<br>　子组件　→　父组件的回调函数　→　子组件调用触发<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">var Son=React.createClass(&#123;</div><div class="line">	render:function()&#123;</div><div class="line">		return (</div><div class="line">			&lt;button onClick=&#123;this.props.refreshParent&#125;&gt;点击我更新父组件&lt;/button&gt;</div><div class="line">		)</div><div class="line">	&#125;</div><div class="line">&#125;)</div><div class="line">var Parent = React.createClass(&#123;</div><div class="line">	getInitialState:function()&#123;</div><div class="line">		return &#123;index:0&#125;</div><div class="line">	&#125;,</div><div class="line">	refreshParent:function()&#123;</div><div class="line">		var self=this;</div><div class="line">		this.setState(function(state)&#123;</div><div class="line">			state.index=self.state.index+1</div><div class="line">		&#125;)</div><div class="line">	&#125;,</div><div class="line">	render:function()&#123;</div><div class="line">		return (</div><div class="line">			&lt;div&gt;</div><div class="line">				我是父组件的第&#123;this.state.index&#125;个数值</div><div class="line">				&lt;Son refreshParent=&#123;this.refreshParent&#125;&gt;&lt;/Son&gt;					</div><div class="line">			&lt;/div&gt;</div><div class="line">		)</div><div class="line">	&#125;</div><div class="line">&#125;)</div><div class="line">React.render(&lt;Parent/&gt;,document.getElementById(&apos;app&apos;));</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>父组件Parent中定义了index状态，并定义了refreshParent方法用于改变index的值，通过props将refreshParent方法传递到子组件，并在子组件中触发执行</p>
+<ul>
+<li>兄弟组件沟通<br>　1、按照React单向数据流方式，我们需要借助父组件进行传递，通过父组件回调函数改变兄弟组件的props。其实这种实现方式与子组件更新父组件状态的方式是大同小异的。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">var Brother1 = React.createClass(&#123;</div><div class="line">	render:function()&#123;</div><div class="line">		return (</div><div class="line">			&lt;div&gt;</div><div class="line">				&lt;button onClick=&#123;this.props.refresh&#125;&gt;点我时我兄弟收到消息&lt;/button&gt;</div><div class="line"></div><div class="line">			&lt;/div&gt;</div><div class="line">		)</div><div class="line">	&#125;</div><div class="line">&#125;)</div><div class="line">var Brother2 = React.createClass(&#123;</div><div class="line">	render:function()&#123;</div><div class="line">		return (</div><div class="line">			&lt;div&gt;&#123;this.props.text&#125;&lt;/div&gt;</div><div class="line">		)</div><div class="line">	&#125;</div><div class="line">&#125;)</div><div class="line">var Parent = React.createClass(&#123;</div><div class="line">	getInitialState:function()&#123;</div><div class="line">		return &#123;text:&quot;我是brother2&quot;&#125;</div><div class="line">	&#125;,</div><div class="line">	refresh:function()&#123;</div><div class="line">		this.setState(&#123;</div><div class="line">			text:&quot;收到收到！！！&quot;</div><div class="line">		&#125;)</div><div class="line">	&#125;,</div><div class="line">	render:function()&#123;</div><div class="line">		return (</div><div class="line">			&lt;div&gt;</div><div class="line">				&lt;h1&gt;兄弟组件更新&lt;/h1&gt;</div><div class="line">				&lt;Brother1 refresh=&#123;this.refresh&#125;/&gt;</div><div class="line">				&lt;Brother2 text=&#123;this.state.text&#125;/&gt;</div><div class="line">			&lt;/div&gt;</div><div class="line">		)</div><div class="line">	&#125;</div><div class="line">&#125;)</div><div class="line">React.render(&lt;Parent/&gt;,document.getElementById(&quot;app&quot;));</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>　2、当组件中的层级很深时，可使用context跨组件传递数据(但使用过多会造成数据传递混乱)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">var A = React.createClass(&#123;</div><div class="line">    	getInitialState:function()&#123;</div><div class="line">    		return &#123; index:1 &#125;</div><div class="line">    	&#125;,</div><div class="line">        childContextTypes: &#123;</div><div class="line">        	clickFunc:React.PropTypes.func,</div><div class="line">        	index:React.PropTypes.number,</div><div class="line">        &#125;,		    </div><div class="line">        getChildContext: function() &#123;</div><div class="line">             return &#123;</div><div class="line">                clickFunc:this.handleClick,</div><div class="line">                index:this.state.index,</div><div class="line">             &#125;;</div><div class="line">        &#125;,</div><div class="line">        handleClick:function()&#123;</div><div class="line">        	this.setState(&#123;</div><div class="line">        		index:this.state.index*3</div><div class="line">        	&#125;)</div><div class="line">        &#125;,</div><div class="line">        render: function() &#123;</div><div class="line">             return (&lt;B /&gt;);</div><div class="line">        &#125;</div><div class="line">    &#125;);		</div><div class="line">var B = React.createClass(&#123;</div><div class="line">        contextTypes: &#123;</div><div class="line">            clickFunc:React.PropTypes.func,</div><div class="line">            index:React.PropTypes.number,</div><div class="line">        &#125;,</div><div class="line">        render: function() &#123;</div><div class="line">        	console.log(this.context)  //打印出来&#123;clickFunc:handleClick,index:1&#125;</div><div class="line">            return &lt;div onClick=&#123;this.context.clickFunc&#125;&gt;点击我啊&#123;this.context.index&#125;&lt;/div&gt;;</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">React.render(&lt;A /&gt;,document.getElementById(&apos;app&apos;));</div></pre></td></tr></table></figure></p>
+<p>#####shouldComponentUpdate,componentWillReceiveProps<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">componentWillReceiveProps:function(nextProp,nextState)&#123;</div><div class="line">    console.log(nextProp,nextState+&quot;=====1&quot;)</div><div class="line">	console.log(this.props,this.state+&quot;=====2&quot;)</div><div class="line">	console.log(&apos;子组件将要获得prop&apos;);	</div><div class="line">	this.setState(&#123;</div><div class="line">		count:nextProp.count</div><div class="line">	&#125;,function()&#123;</div><div class="line">		console.log(this.state.count)</div><div class="line">	&#125;)			</div><div class="line">&#125;,</div><div class="line">shouldComponentUpdate:function(nextProp,nextState)&#123;		</div><div class="line">	console.log(nextProp,nextState+&quot;=====3&quot;)</div><div class="line">	console.log(this.props,this.state+&quot;=====4&quot;)</div><div class="line">	if(nextProp.count&gt; 5) return false;</div><div class="line">	return true;</div><div class="line">&#125;,</div></pre></td></tr></table></figure></p>
+<p>shouldComponentUpdate方法是react内置的方法，用于控制是否更新，有一个返回值，若为true，则更新，否则，不更新；方法中，nextProps为props改变后的值，而this.props为nextProps的前一个值。</p>
+<p>componentWillReceiveProps当props有变动时，在组件更新前，componentWillReceiveProps会优于shouldComponentUpdate执行</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag">#react</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/21/ng1与ng2依赖注入的比较/" rel="next" title="依赖注入">
+                <i class="fa fa-chevron-left"></i> 依赖注入
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/23/redux_practice/" rel="prev" title="redux实践">
+                redux实践 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/22/this.props_this.state/"
+           data-title="react中的this.props_this.state详解" data-url="http://haoliqiang.github.io/2016/11/22/this.props_this.state/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.png"
+               alt="XF2E" />
+          <p class="site-author-name" itemprop="name">XF2E</p>
+          <p class="site-description motion-element" itemprop="description">just do it</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XF2E</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xf2e"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = false;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title >= 0 || index_content >= 0 ){
+                                isMatch = true;
+								if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            } 
+							
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("drOtCxa0pfVstUT7nX2AEscw-gzGzoHsz", "pr8nSESJHyoCkb5Qd6WPwni1");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

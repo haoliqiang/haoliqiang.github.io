@@ -1,0 +1,975 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="react," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="以下分享来自团队女童鞋yerr
+
+三个状态1.MountedReact components被render解析生成对应的DOM节点，并在插入浏览器的DOM结构的一个过程；
+getInitialState ：初始化stategetDefaultProps : 初始化props">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react的生命周期和组件">
+<meta property="og:url" content="http://haoliqiang.github.io/2016/11/21/react_component_lifeCycle/index.html">
+<meta property="og:site_name" content="plot‘blog">
+<meta property="og:description" content="以下分享来自团队女童鞋yerr
+
+三个状态1.MountedReact components被render解析生成对应的DOM节点，并在插入浏览器的DOM结构的一个过程；
+getInitialState ：初始化stategetDefaultProps : 初始化props">
+<meta property="og:image" content="https://github.com/yerr1990/yerr1990.github.io/blob/master/images/lifecycle.png">
+<meta property="og:updated_time" content="2017-01-08T09:29:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="react的生命周期和组件">
+<meta name="twitter:description" content="以下分享来自团队女童鞋yerr
+
+三个状态1.MountedReact components被render解析生成对应的DOM节点，并在插入浏览器的DOM结构的一个过程；
+getInitialState ：初始化stategetDefaultProps : 初始化props">
+<meta name="twitter:image" content="https://github.com/yerr1990/yerr1990.github.io/blob/master/images/lifecycle.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://haoliqiang.github.io/2016/11/21/react_component_lifeCycle/"/>
+
+
+  <title> react的生命周期和组件 | plot‘blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?79c07a1e92fcb04362ad9d2d65bc3e40";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">plot‘blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">f2e</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'LzdXF9WGQnKUybZS6zWB','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                react的生命周期和组件
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-21T00:00:00+08:00" content="2016-11-21">
+              2016-11-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/react/" itemprop="url" rel="index">
+                    <span itemprop="name">react</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/21/react_component_lifeCycle/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/21/react_component_lifeCycle/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/11/21/react_component_lifeCycle/" class="leancloud_visitors" data-flag-title="react的生命周期和组件">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>以下分享来自团队女童鞋<a href="http://www.cnblogs.com/yerr1990/" target="_blank" rel="external">yerr</a></p>
+</blockquote>
+<h2 id="三个状态"><a href="#三个状态" class="headerlink" title="三个状态"></a>三个状态</h2><h3 id="1-Mounted"><a href="#1-Mounted" class="headerlink" title="1.Mounted"></a>1.Mounted</h3><p>React components被render解析生成对应的DOM节点，并在插入浏览器的DOM结构的一个过程；</p>
+<p>getInitialState ：初始化state<br>getDefaultProps : 初始化props</p>
+<a id="more"></a>
+<h3 id="2-Update"><a href="#2-Update" class="headerlink" title="2. Update"></a>2. Update</h3><p>一个mounted 的components被重新render的过程；（只有影响了DOM结构时才会被改变）;</p>
+<p>shouldComponentUpdate:组件在决定重新渲染（虚拟dom比对完毕生成最终的dom后）之前会调用该函数，该函数将是否重新渲染的权限交给了开发者，该函数默认直接返回true，表示默认直接出发dom更新;</p>
+<p>componentWillReceiveProps:当节点初次被放入的时候componentWillReceiveProps并不会被触发。原因是因为 componentWillReceiveProps 经常会处理一些和old props 比较的逻辑，而且会在变化之前执行；不在组件即将渲染的时候触发，这也是这个方法设计的初衷。</p>
+<h3 id="3-Unmounted"><a href="#3-Unmounted" class="headerlink" title="3. Unmounted"></a>3. Unmounted</h3><p>一个mounted的RC对应的DOM节点被从DOM结构中移除的过程;<br><img src="https://github.com/yerr1990/yerr1990.github.io/blob/master/images/lifecycle.png" alt="image"><a href="https://github.com/yerr1990/yerr1990.github.io/blob/master/images/lifecycle.png" target="_blank" rel="external">https://github.com/yerr1990/yerr1990.github.io/blob/master/images/lifecycle.png</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">var HelloMessage = React.createClass(&#123;</div><div class="line">      getInitialState:function()&#123; //在被render之前</div><div class="line">        alert(&quot;init&quot;);</div><div class="line">        return &#123;</div><div class="line">          opacity: 0.5,</div><div class="line">          fontSize : &apos;20px&apos;</div><div class="line">        &#125;;</div><div class="line">      &#125;,</div><div class="line">      getDefaultProps:function () &#123;//在被render之前</div><div class="line">        return &#123;</div><div class="line">          name: &quot;mary&quot;</div><div class="line">        &#125;;</div><div class="line">      &#125;,</div><div class="line">      componentWillMount :function () &#123;</div><div class="line">        alert(&quot;will&quot;);</div><div class="line">      &#125;,</div><div class="line">      render: function() &#123;</div><div class="line">        return &lt;h1  style=&#123;this.state&#125;&gt;Hello &#123;this.props.name&#125;&lt;/h1&gt;; //这里也可以使用键值</div><div class="line">      &#125;,</div><div class="line">      componentDidMount:function () &#123;</div><div class="line">        alert(&quot;did&quot;);</div><div class="line">        var _self = this;</div><div class="line">        window.setTimeout(function () &#123;</div><div class="line">          _self.setState(&#123;</div><div class="line">              opacity: 1.,</div><div class="line">              fontSize : &apos;50px&apos;</div><div class="line">          &#125;)</div><div class="line">        &#125;,2000)</div><div class="line">      &#125;,</div><div class="line">      /*componentWillReceiveProps(nextProps) &#123;</div><div class="line">        console.log(&quot;执行componentWillReceiveProps&quot;,nextProps);</div><div class="line">        &#125;</div><div class="line">    */</div><div class="line">     /* shouldComponentUpdate: function(nextProps, nextState) &#123;</div><div class="line">        return true;</div><div class="line">      &#125;*/</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    ReactDOM.render(</div><div class="line">      &lt;HelloMessage name=&quot;john&quot; /&gt;,</div><div class="line">      document.getElementById(&apos;example&apos;)</div><div class="line">    );</div></pre></td></tr></table></figure>
+<h2 id="react-组件"><a href="#react-组件" class="headerlink" title="react 组件"></a>react 组件</h2><h3 id="React创建组件的三种方式及其区别"><a href="#React创建组件的三种方式及其区别" class="headerlink" title="React创建组件的三种方式及其区别"></a>React创建组件的三种方式及其区别</h3><h4 id="函数式定义的无状态组件"><a href="#函数式定义的无状态组件" class="headerlink" title="函数式定义的无状态组件"></a>函数式定义的无状态组件</h4><pre><code>在大部分React代码中，大多数组件被写成无状态的组件，
+通过简单组合可以构建成其他的组件等；这种通过多个
+简单然后合并成一个大应用的设计模式被提倡。
+特点：
+1.不会被实例化，提高性能；
+2.不能访问this对象；
+3.没有生命周期；
+4.只能访问props
+</code></pre><h4 id="es5原生方式React-createClass定义的组件"><a href="#es5原生方式React-createClass定义的组件" class="headerlink" title="es5原生方式React.createClass定义的组件"></a>es5原生方式React.createClass定义的组件</h4><pre><code>React.createClass会自绑定函数方法（不像React.Component只绑定需要关心的函数）导致不必要的性能开销，
+增加代码过时的可能性。
+</code></pre><h4 id="es6形式的extendsReact-Component定义的组件"><a href="#es6形式的extendsReact-Component定义的组件" class="headerlink" title="es6形式的extendsReact.Component定义的组件"></a>es6形式的extendsReact.Component定义的组件</h4><pre><code>React.Component是以ES6的形式来创建react的组件的，
+是React目前极为推荐的创建有状态组件的方式，最终会取代
+</code></pre><h3 id="组件api"><a href="#组件api" class="headerlink" title="组件api"></a>组件api</h3><pre><code>设置状态：setState
+替换状态：replaceState
+设置属性setProps
+替换属性replaceProps
+强制更新：forceUpdate
+获取DOM节点：findDOMNode
+判断组件挂载状态：isMounted
+</code></pre><p>接下来我们封装一个输出 “Hello World！” 的组件，组件名为 HelloMessage：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">//您可能注意到，原生 HTML 元素名称是以小写字母开头的，而自定义 React 组件（类）名称是以大写字母开头的。</div><div class="line">var HelloMessage = React.createClass(&#123;</div><div class="line">  render: function() &#123;</div><div class="line">    return </div><div class="line">    &lt;div className=&quot;content&quot;&gt; //className是js关键字</div><div class="line">    &lt;h1&gt;Hello World！&lt;/h1&gt;</div><div class="line">    &lt;/div&gt;</div><div class="line">    </div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">React.render(</div><div class="line">  &lt;HelloMessage /&gt;,//组件名字</div><div class="line">  document.getElementById(&apos;example&apos;)//要插入的节点</div><div class="line">);</div></pre></td></tr></table></figure>
+<p><em>注意，在添加属性时， class 属性需要写成 className ，for 属性需要写成 htmlFor ，这是因为 class 和 for 是 JavaScript 的保留字。</em></p>
+<h2 id="复合组件"><a href="#复合组件" class="headerlink" title="复合组件"></a>复合组件</h2><p>我们可以通过创建多个组件来合成一个组件，即把组件的不同功能点进行分离。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">var WebSite = React.createClass(&#123;</div><div class="line">  render: function() &#123;</div><div class="line">    return (</div><div class="line">      &lt;div&gt;</div><div class="line">        &lt;Name name=&#123;this.props.name&#125; /&gt;</div><div class="line">        &lt;Link site=&#123;this.props.site&#125; /&gt;</div><div class="line">      &lt;/div&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">var Name = React.createClass(&#123;</div><div class="line">  render: function() &#123;</div><div class="line">    return (</div><div class="line">      &lt;h1&gt;&#123;this.props.name&#125;&lt;/h1&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">var Link = React.createClass(&#123;</div><div class="line">  render: function() &#123;</div><div class="line">    return (</div><div class="line">      &lt;a href=&#123;this.props.site&#125;&gt;</div><div class="line">        &#123;this.props.site&#125;</div><div class="line">      &lt;/a&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">React.render(</div><div class="line">  &lt;WebSite name=&quot;叶蓉蓉&quot; site=&quot; http://www.cnblogs.com/yerr1990&quot; /&gt;,</div><div class="line">  document.getElementById(&apos;example&apos;)</div><div class="line">);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">React.render(</div><div class="line">  &lt;div&gt;</div><div class="line">    &lt;MyLabel  text=&#123;TextLabel&#125; /&gt;</div><div class="line">     &lt;MyTextfield /&gt;</div><div class="line">     &lt;MyButton textlabel=&apos;OK&apos; /&gt;</div><div class="line"> &lt;/div&gt;,</div><div class="line">  document.getElementById(&apos;container&apos;)</div><div class="line">);</div><div class="line">//前面的 API 调用将组合的组件呈现到虚拟 DOM 中 ID 为 container 的 &lt;div&gt;— 元素中。</div></pre></td></tr></table></figure>
+<h2 id="组件之间的通讯"><a href="#组件之间的通讯" class="headerlink" title="组件之间的通讯"></a>组件之间的通讯</h2><pre><code>【父组件】向【子组件】传值；
+【子组件】向【父组件】传值；
+没有任何嵌套关系的组件之间传值（PS：比如：兄弟组件之间传值）
+</code></pre><h3 id="1-【父组件】向【子组件】传值；"><a href="#1-【父组件】向【子组件】传值；" class="headerlink" title="1.【父组件】向【子组件】传值；"></a>1.【父组件】向【子组件】传值；</h3><p>利用 props 来进行交流</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">// 父组件</div><div class="line">var MyContainer = React.createClass(&#123;</div><div class="line">  getInitialState: function () &#123;</div><div class="line">    return &#123;</div><div class="line">      checked: true</div><div class="line">    &#125;;</div><div class="line">  &#125;,</div><div class="line">  render: function() &#123;</div><div class="line">    return (</div><div class="line">      &lt;ToggleButton text=&quot;Toggle me&quot; checked=&#123;this.state.checked&#125; /&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">// 子组件</div><div class="line">var ToggleButton = React.createClass(&#123;</div><div class="line">  render: function () &#123;</div><div class="line">    // 从【父组件】获取的值</div><div class="line">    var checked = this.props.checked,</div><div class="line">        text = this.props.text;</div><div class="line"></div><div class="line">    return (</div><div class="line">        &lt;label&gt;&#123;text&#125;: &lt;input type=&quot;checkbox&quot; checked=&#123;checked&#125; /&gt;&lt;/label&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>但是呢，这里如果组件层层嵌套太深，那么从外到内组件的交流成本就变得很高</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">// 父组件</div><div class="line">var MyContainer = React.createClass(&#123;</div><div class="line">  render: function() &#123;</div><div class="line">    return (</div><div class="line">      &lt;Intermediate text=&quot;where is my son?&quot; /&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">// 子组件1：中间嵌套的组件</div><div class="line">var Intermediate = React.createClass(&#123;</div><div class="line">  render: function () &#123;</div><div class="line">    return (</div><div class="line">      &lt;Child text=&#123;this.props.text&#125; /&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">// 子组件2：子组件1的子组件</div><div class="line">var Child = React.createClass(&#123;</div><div class="line">  render: function () &#123;</div><div class="line">    return (</div><div class="line">      &lt;span&gt;&#123;this.props.text&#125;&lt;/span&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="2【子组件】向【父组件】传值；"><a href="#2【子组件】向【父组件】传值；" class="headerlink" title="2【子组件】向【父组件】传值；"></a>2【子组件】向【父组件】传值；</h3><p>通过【子组件】控制自己的 state 然后告诉【父组件】的点击状态，然后在【父组件】中展示出来。因此，我们添加一个 change 事件来做交互。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">// 父组件</div><div class="line">var MyContainer = React.createClass(&#123;</div><div class="line">  getInitialState: function () &#123;</div><div class="line">    return &#123;</div><div class="line">      checked: false</div><div class="line">    &#125;;</div><div class="line">  &#125;,</div><div class="line">  onChildChanged: function (newState) &#123;</div><div class="line">    this.setState(&#123;</div><div class="line">      checked: newState</div><div class="line">    &#125;);</div><div class="line">  &#125;,</div><div class="line">  render: function() &#123;</div><div class="line">    var isChecked = this.state.checked ? &apos;yes&apos; : &apos;no&apos;;</div><div class="line">    return (</div><div class="line">      &lt;div&gt;</div><div class="line">        &lt;div&gt;Are you checked: &#123;isChecked&#125;&lt;/div&gt;</div><div class="line">        &lt;ToggleButton text=&quot;Toggle me&quot;</div><div class="line">          initialChecked=&#123;this.state.checked&#125;</div><div class="line">          callbackParent=&#123;this.onChildChanged&#125;</div><div class="line">          /&gt;</div><div class="line">      &lt;/div&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">// 子组件</div><div class="line">var ToggleButton = React.createClass(&#123;</div><div class="line">  getInitialState: function () &#123;</div><div class="line">    return &#123;</div><div class="line">      checked: this.props.initialChecked</div><div class="line">    &#125;;</div><div class="line">  &#125;,</div><div class="line">  onTextChange: function () &#123;</div><div class="line">    var newState = !this.state.checked;</div><div class="line">    this.setState(&#123;</div><div class="line">      checked: newState</div><div class="line">    &#125;);</div><div class="line">    // 这里要注意：setState 是一个异步方法，所以需要操作缓存的当前值</div><div class="line">    this.props.callbackParent(newState);</div><div class="line">  &#125;,</div><div class="line">  render: function () &#123;</div><div class="line">    // 从【父组件】获取的值</div><div class="line">    var text = this.props.text;</div><div class="line">    // 组件自身的状态数据</div><div class="line">    var checked = this.state.checked;</div><div class="line"></div><div class="line">    return (</div><div class="line">        &lt;label&gt;&#123;text&#125;: &lt;input type=&quot;checkbox&quot; checked=&#123;checked&#125;                 onChange=&#123;this.onTextChange&#125; /&gt;&lt;/label&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="3-没有任何嵌套关系的组件之间传值"><a href="#3-没有任何嵌套关系的组件之间传值" class="headerlink" title="3.没有任何嵌套关系的组件之间传值"></a>3.没有任何嵌套关系的组件之间传值</h3>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag">#react</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/18/angular_directive_service_ctrl/" rel="next" title="何时使用指令，服务，控制器">
+                <i class="fa fa-chevron-left"></i> 何时使用指令，服务，控制器
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/21/ng1与ng2依赖注入的比较/" rel="prev" title="依赖注入">
+                依赖注入 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/21/react_component_lifeCycle/"
+           data-title="react的生命周期和组件" data-url="http://haoliqiang.github.io/2016/11/21/react_component_lifeCycle/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.png"
+               alt="XF2E" />
+          <p class="site-author-name" itemprop="name">XF2E</p>
+          <p class="site-description motion-element" itemprop="description">just do it</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#三个状态"><span class="nav-number">1.</span> <span class="nav-text">三个状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Mounted"><span class="nav-number">1.1.</span> <span class="nav-text">1.Mounted</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Update"><span class="nav-number">1.2.</span> <span class="nav-text">2. Update</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Unmounted"><span class="nav-number">1.3.</span> <span class="nav-text">3. Unmounted</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#react-组件"><span class="nav-number">2.</span> <span class="nav-text">react 组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#React创建组件的三种方式及其区别"><span class="nav-number">2.1.</span> <span class="nav-text">React创建组件的三种方式及其区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#函数式定义的无状态组件"><span class="nav-number">2.1.1.</span> <span class="nav-text">函数式定义的无状态组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#es5原生方式React-createClass定义的组件"><span class="nav-number">2.1.2.</span> <span class="nav-text">es5原生方式React.createClass定义的组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#es6形式的extendsReact-Component定义的组件"><span class="nav-number">2.1.3.</span> <span class="nav-text">es6形式的extendsReact.Component定义的组件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件api"><span class="nav-number">2.2.</span> <span class="nav-text">组件api</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复合组件"><span class="nav-number">3.</span> <span class="nav-text">复合组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组件之间的通讯"><span class="nav-number">4.</span> <span class="nav-text">组件之间的通讯</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-【父组件】向【子组件】传值；"><span class="nav-number">4.1.</span> <span class="nav-text">1.【父组件】向【子组件】传值；</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2【子组件】向【父组件】传值；"><span class="nav-number">4.2.</span> <span class="nav-text">2【子组件】向【父组件】传值；</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-没有任何嵌套关系的组件之间传值"><span class="nav-number">4.3.</span> <span class="nav-text">3.没有任何嵌套关系的组件之间传值</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XF2E</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xf2e"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = false;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title >= 0 || index_content >= 0 ){
+                                isMatch = true;
+								if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            } 
+							
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("drOtCxa0pfVstUT7nX2AEscw-gzGzoHsz", "pr8nSESJHyoCkb5Qd6WPwni1");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

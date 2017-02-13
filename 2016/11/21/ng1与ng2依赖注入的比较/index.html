@@ -1,0 +1,949 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="小车匠,前端,团队,javascript,node,angular,react" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。
+Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅">
+<meta property="og:type" content="article">
+<meta property="og:title" content="依赖注入">
+<meta property="og:url" content="http://haoliqiang.github.io/2016/11/21/ng1与ng2依赖注入的比较/index.html">
+<meta property="og:site_name" content="plot‘blog">
+<meta property="og:description" content="依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。
+Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/949077-ce2193b397ce7ee8.png?imageMogr2/auto-orient/strip%7CimageView2/2">
+<meta property="og:updated_time" content="2017-01-08T09:29:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="依赖注入">
+<meta name="twitter:description" content="依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。
+Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/949077-ce2193b397ce7ee8.png?imageMogr2/auto-orient/strip%7CimageView2/2">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://haoliqiang.github.io/2016/11/21/ng1与ng2依赖注入的比较/"/>
+
+
+  <title> 依赖注入 | plot‘blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?79c07a1e92fcb04362ad9d2d65bc3e40";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">plot‘blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">f2e</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'LzdXF9WGQnKUybZS6zWB','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                依赖注入
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-21T09:35:40+08:00" content="2016-11-21">
+              2016-11-21
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/21/ng1与ng2依赖注入的比较/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/21/ng1与ng2依赖注入的比较/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/11/21/ng1与ng2依赖注入的比较/" class="leancloud_visitors" data-flag-title="依赖注入">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。"><a href="#依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。" class="headerlink" title="依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。"></a>依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。</h3><p><br></p>
+<h3 id="Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅对测试很有用，而且还不会污染全局变量，是很好的设计模式。"><a href="#Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅对测试很有用，而且还不会污染全局变量，是很好的设计模式。" class="headerlink" title="Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅对测试很有用，而且还不会污染全局变量，是很好的设计模式。"></a>Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅对测试很有用，而且还不会污染全局变量，是很好的设计模式。</h3><p><br></p>
+<h2 id="Angular1依赖注入的方法"><a href="#Angular1依赖注入的方法" class="headerlink" title="Angular1依赖注入的方法"></a>Angular1依赖注入的方法</h2><ol>
+<li>通过函数的参数进行推断式注入声明<h3 id="如果没有明确的声明，Angular1会假定名称就是依赖的名称。因此，它会在内部调用函数对象的toString-方法，分析并提取函数的参数列表，然后通过-injector将这些参数再注入进对象实例。下面是代码示例："><a href="#如果没有明确的声明，Angular1会假定名称就是依赖的名称。因此，它会在内部调用函数对象的toString-方法，分析并提取函数的参数列表，然后通过-injector将这些参数再注入进对象实例。下面是代码示例：" class="headerlink" title="如果没有明确的声明，Angular1会假定名称就是依赖的名称。因此，它会在内部调用函数对象的toString()方法，分析并提取函数的参数列表，然后通过$injector将这些参数再注入进对象实例。下面是代码示例："></a>如果没有明确的声明，Angular1会假定名称就是依赖的名称。因此，它会在内部调用函数对象的toString()方法，分析并提取函数的参数列表，然后通过$injector将这些参数再注入进对象实例。下面是代码示例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">function myController($scope,$timeout)&#123;</div><div class="line">	var updateTime = function()&#123;</div><div class="line">		$scope.clock = &#123;</div><div class="line">			time: new Date()</div><div class="line">		&#125;;</div><div class="line">		$timeout(function()&#123;</div><div class="line">			$scope.clock.time = new Date();</div><div class="line">			updateTime();</div><div class="line">		&#125;,1000)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;div ng-controller=&apos;myController&apos;&gt;</div><div class="line">	&lt;span&gt;&#123;&#123;clock.time | data:&apos;yyyy-MM-dd hh:mm:ss&apos;&#125;&#125;&lt;/span&gt;</div><div class="line">&lt;/div&gt;</div></pre></td></tr></table></figure>
+<h3 id="创建了一个可以自动更新时间的应用，看看是如何进行依赖注入的。通过设置参数-scope和-timeout，angular1会在内部调用函数的toString-方法，分析并提取函数的参数列表，然后通过-injector将这些参数注入到对象的实例。"><a href="#创建了一个可以自动更新时间的应用，看看是如何进行依赖注入的。通过设置参数-scope和-timeout，angular1会在内部调用函数的toString-方法，分析并提取函数的参数列表，然后通过-injector将这些参数注入到对象的实例。" class="headerlink" title="创建了一个可以自动更新时间的应用，看看是如何进行依赖注入的。通过设置参数$scope和$timeout，angular1会在内部调用函数的toString()方法，分析并提取函数的参数列表，然后通过$injector将这些参数注入到对象的实例。"></a>创建了一个可以自动更新时间的应用，看看是如何进行依赖注入的。通过设置参数$scope和$timeout，angular1会在内部调用函数的toString()方法，分析并提取函数的参数列表，然后通过$injector将这些参数注入到对象的实例。</h3><p><br></p>
+<p><font color="#f00" size="5" face="黑体">注意：</font><br><br></p>
+<ul>
+<li>此方法只适合未经压缩混淆的代码，因为angular1需要解析未经压缩混淆的参数列表。<br><br></li>
+</ul>
+<ol>
+<li>显式的注入声明<h3 id="显式的明确定义一个函数在被调用时需要用到的依赖关系，通过这种方法声明依赖，即使在源代码被压缩，参数名称发生改变的情况下依然可以工作。代码示例："><a href="#显式的明确定义一个函数在被调用时需要用到的依赖关系，通过这种方法声明依赖，即使在源代码被压缩，参数名称发生改变的情况下依然可以工作。代码示例：" class="headerlink" title="显式的明确定义一个函数在被调用时需要用到的依赖关系，通过这种方法声明依赖，即使在源代码被压缩，参数名称发生改变的情况下依然可以工作。代码示例："></a>显式的明确定义一个函数在被调用时需要用到的依赖关系，通过这种方法声明依赖，即使在源代码被压缩，参数名称发生改变的情况下依然可以工作。代码示例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var mycontrollerFactory = function mycontroller($scope,$timeout)&#123;</div><div class="line">	var updateTime = function () &#123;</div><div class="line">        $scope.clock = &#123;</div><div class="line">            time: new Date()</div><div class="line">        &#125;;</div><div class="line">        $timeout(function () &#123;</div><div class="line">            $scope.clock.time = new Date();</div><div class="line">            updateTime();</div><div class="line">        &#125;, 1000);</div><div class="line">    &#125;</div><div class="line">    updateTime();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mycontrollerFactory.$inject = [&apos;$scope&apos;,&apos;$timeout&apos;];</div></pre></td></tr></table></figure>
+<h3 id="显式的将我们需要的依赖注入到函数中，所以在函数中参数也可以分别换成其他字段。"><a href="#显式的将我们需要的依赖注入到函数中，所以在函数中参数也可以分别换成其他字段。" class="headerlink" title="显式的将我们需要的依赖注入到函数中，所以在函数中参数也可以分别换成其他字段。"></a>显式的将我们需要的依赖注入到函数中，所以在函数中参数也可以分别换成其他字段。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">var mycontrollerFactory = function mycontroller(s,t)&#123;.....&#125;</div></pre></td></tr></table></figure>
+<p><font color="#f00" size="5" face="黑体">注意：</font><br><br></p>
+<ul>
+<li>对于这种声明方式，参数的顺序是十分重要的，因为$inject数组元素的顺序必须和注入的参数顺序一一对应。<br><br></li>
+</ul>
+<ol>
+<li>行内注入声明<h3 id="angular1提供的行内注入方法实际上是一种语法糖，它与前面的提到的通过-inject属性进行声明的原理是一样的，但是允许我们在函数定义的时候从行内将参数传入，这种方法方便简洁，而且避免了在定义的过程中使用临时变量。"><a href="#angular1提供的行内注入方法实际上是一种语法糖，它与前面的提到的通过-inject属性进行声明的原理是一样的，但是允许我们在函数定义的时候从行内将参数传入，这种方法方便简洁，而且避免了在定义的过程中使用临时变量。" class="headerlink" title="angular1提供的行内注入方法实际上是一种语法糖，它与前面的提到的通过$inject属性进行声明的原理是一样的，但是允许我们在函数定义的时候从行内将参数传入，这种方法方便简洁，而且避免了在定义的过程中使用临时变量。"></a>angular1提供的行内注入方法实际上是一种语法糖，它与前面的提到的通过$inject属性进行声明的原理是一样的，但是允许我们在函数定义的时候从行内将参数传入，这种方法方便简洁，而且避免了在定义的过程中使用临时变量。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">angular.module(&apos;app&apos;,[])</div><div class="line">.controller(&apos;mycontroller&apos;,[&apos;$scope&apos;,&apos;$timeout&apos;,function($scope,$timeout)&#123;</div><div class="line">	var updateTime = function () &#123;</div><div class="line">        $scope.clock = &#123;</div><div class="line">            time: new Date()</div><div class="line">        &#125;;</div><div class="line">        $timeout(function () &#123;</div><div class="line">            $scope.clock.time = new Date();</div><div class="line">            updateTime();</div><div class="line">        &#125;, 1000);</div><div class="line">    &#125;</div><div class="line">    updateTime();</div><div class="line">&#125;])</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><font color="#f00" size="5" face="黑体">注意：</font><br><br></p>
+<ul>
+<li>行内声明的方式允许我们直接传入一个参数数组，而不是一个函数，数组的元素是字符串，他们代表的是可以被注入到对象中的依赖名字，最后一个参数就是依赖注入的目标函数对象本身。</li>
+</ul>
+<h2 id="下面来对比一下ng1与ng2的依赖注入的区别，以login组件为例"><a href="#下面来对比一下ng1与ng2的依赖注入的区别，以login组件为例" class="headerlink" title="下面来对比一下ng1与ng2的依赖注入的区别，以login组件为例"></a>下面来对比一下ng1与ng2的依赖注入的区别，以login组件为例</h2><h2 id="先来看一下angular2的架构图"><a href="#先来看一下angular2的架构图" class="headerlink" title="先来看一下angular2的架构图"></a>先来看一下angular2的架构图</h2><p><img src="http://upload-images.jianshu.io/upload_images/949077-ce2193b397ce7ee8.png?imageMogr2/auto-orient/strip%7CimageView2/2" alt="providerToservice"><br><br><br><em>Angular1</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">class Login&#123;</div><div class="line">    formValue : &#123;login:string,password:string&#125; = &#123;login:&apos;&apos;,password:&apos;&apos;&#125;;</div><div class="line">    onSubmit()&#123;</div><div class="line">        const service = new LoginService();</div><div class="line">        service.login(this.formValue);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">module.component(&apos;login&apos;,&#123;</div><div class="line">    controller: Login,</div><div class="line">    controllerAs ; &apos;ctrl&apos;,</div><div class="line">    template:`</div><div class="line">        &lt;form ng-submit = &quot;ctrl.onSubmit()&quot;&gt;</div><div class="line">        Text &lt;input type=&quot;text&quot; ng-model=&quot;ctrl.formValue.login&gt;</div><div class="line">        password  &lt;input type=&quot;password&quot; ng-model=&quot;ctrl.formValue.password&quot;&gt;</div><div class="line">        &lt;button&gt;submit&lt;/button&gt;</div><div class="line">        &lt;/form&gt;</div><div class="line">    `</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p><em>Angular2</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@Component(&#123;</div><div class="line">    selector:&apos;login&apos;,</div><div class="line">    template:`</div><div class="line">        .....</div><div class="line">    `</div><div class="line">&#125;)</div><div class="line">class Login&#123;</div><div class="line">    onSubmit(formValue:&#123;login:string,password:string&#125;)&#123;</div><div class="line">        const service = new LoginService();</div><div class="line">        service.login(formValue);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="在这里直接把login组件绑定在login-service上的，很难进行独立测试，也降低了它复用的可能性"><a href="#在这里直接把login组件绑定在login-service上的，很难进行独立测试，也降低了它复用的可能性" class="headerlink" title="在这里直接把login组件绑定在login service上的，很难进行独立测试，也降低了它复用的可能性"></a>在这里直接把login组件绑定在login service上的，很难进行独立测试，也降低了它复用的可能性</h3><p><br></p>
+<h2 id="with-DI"><a href="#with-DI" class="headerlink" title="with DI"></a>with DI</h2><h3 id="在构造函数里面注射一个LoginService的实例，而不是直接创建"><a href="#在构造函数里面注射一个LoginService的实例，而不是直接创建" class="headerlink" title="在构造函数里面注射一个LoginService的实例，而不是直接创建"></a>在构造函数里面注射一个LoginService的实例，而不是直接创建</h3><p><em>Angular1</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">class Login&#123;</div><div class="line">    formValue : &#123;login:string,password:string&#125; = &#123;login:&apos;&apos;,password:&apos;&apos;&#125;;</div><div class="line">    constructor(public service:LoginService)&#123;&#125;</div><div class="line">    onSubmit()&#123;</div><div class="line">        this.service.login(this.formValue);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="我们还需要告诉框架应该创建这个service的实例"><a href="#我们还需要告诉框架应该创建这个service的实例" class="headerlink" title="我们还需要告诉框架应该创建这个service的实例"></a>我们还需要告诉框架应该创建这个service的实例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">module.service(&apos;login&apos;,LoginService);</div></pre></td></tr></table></figure>
+<p><br><br><em>Angular2</em></p>
+<h3 id="同样，在构造函数里面注射一个LoginSerivce的实例"><a href="#同样，在构造函数里面注射一个LoginSerivce的实例" class="headerlink" title="同样，在构造函数里面注射一个LoginSerivce的实例"></a>同样，在构造函数里面注射一个LoginSerivce的实例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">class Login&#123;</div><div class="line">    constructor(public service: LoginService)&#123;&#125;</div><div class="line">    onSubmit(formValue:&#123;login:string,password:string&#125;)&#123;</div><div class="line">        this.service.login(formValue);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>不同于ng1，我们需要将这个service添加到providers列表里面来实现<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">@NgModule(&#123;</div><div class="line">    bootstrap:[Login],</div><div class="line">    providers:[LoginService],</div><div class="line">    declarations:[Login]</div><div class="line">&#125;)</div><div class="line">class AppModule&#123;&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="如果注入到它的根模块，则整个应用都可以调用，也可以注入到使用它的组件元数据里面-只需在装饰器加上一个providers配置项-这样注入的服务只对自己和后代可用"><a href="#如果注入到它的根模块，则整个应用都可以调用，也可以注入到使用它的组件元数据里面-只需在装饰器加上一个providers配置项-这样注入的服务只对自己和后代可用" class="headerlink" title="如果注入到它的根模块，则整个应用都可以调用，也可以注入到使用它的组件元数据里面,只需在装饰器加上一个providers配置项,这样注入的服务只对自己和后代可用"></a>如果注入到它的根模块，则整个应用都可以调用，也可以注入到使用它的组件元数据里面,只需在装饰器加上一个providers配置项,这样注入的服务只对自己和后代可用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@Component(&#123;</div><div class="line">    selector:&apos;lr&apos;,</div><div class="line">    providers:[LoginService]</div><div class="line">&#125;)</div><div class="line">class APPLr&#123;&#125;</div></pre></td></tr></table></figure>
+<p><font color="#f00" size="5" face="黑体">注意：</font></p>
+<ul>
+<li>ng1依赖于字符串来配置DI，而ng2则默认使用注解的方式<h3 id="ng1里面有好几个Api可以用来给指令注入依赖，有些是根据名称注入的（LoginService）-有些依赖会一直自动提供（link函数里面的），有些需要使用require进行配置"><a href="#ng1里面有好几个Api可以用来给指令注入依赖，有些是根据名称注入的（LoginService）-有些依赖会一直自动提供（link函数里面的），有些需要使用require进行配置" class="headerlink" title="ng1里面有好几个Api可以用来给指令注入依赖，有些是根据名称注入的（LoginService）,有些依赖会一直自动提供（link函数里面的），有些需要使用require进行配置"></a>ng1里面有好几个Api可以用来给指令注入依赖，有些是根据名称注入的（LoginService）,有些依赖会一直自动提供（link函数里面的），有些需要使用require进行配置</h3><br><h3 id="ng2提供了统一的Api用来注入服务，指令等，所有这些内容都会被注入到组件的构造函数里面"><a href="#ng2提供了统一的Api用来注入服务，指令等，所有这些内容都会被注入到组件的构造函数里面" class="headerlink" title="ng2提供了统一的Api用来注入服务，指令等，所有这些内容都会被注入到组件的构造函数里面"></a>ng2提供了统一的Api用来注入服务，指令等，所有这些内容都会被注入到组件的构造函数里面</h3><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3></li>
+<li>DI是ng的核心机制之一</li>
+<li>他可以使你的代码更加松耦合</li>
+<li>提升了可测试性</li>
+<li>ng2采用了统一的Api来给组件注入依赖</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/21/react_component_lifeCycle/" rel="next" title="react的生命周期和组件">
+                <i class="fa fa-chevron-left"></i> react的生命周期和组件
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/22/this.props_this.state/" rel="prev" title="react中的this.props_this.state详解">
+                react中的this.props_this.state详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/21/ng1与ng2依赖注入的比较/"
+           data-title="依赖注入" data-url="http://haoliqiang.github.io/2016/11/21/ng1与ng2依赖注入的比较/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.png"
+               alt="XF2E" />
+          <p class="site-author-name" itemprop="name">XF2E</p>
+          <p class="site-description motion-element" itemprop="description">just do it</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。"><span class="nav-number">1.</span> <span class="nav-text">依赖注入是一种软件设计模式，他允许你移除软件组件的硬编码方式，替代的是通过依赖注入制造低耦合的组件不论在编译阶段还是在运行阶段。硬编码就是在程序中将代码写死，低耦合就是尽量让每个模块独立，相关的处理尽量在单个模块中完成。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅对测试很有用，而且还不会污染全局变量，是很好的设计模式。"><span class="nav-number">2.</span> <span class="nav-text">Angular1有一个内在的注入机制，他可以把你的App分成许多个可重复使用的组件，当需要的时候通过依赖注入把这些自减注入进你的App中去。在需要的地方进行参数传递，这种方法不仅对测试很有用，而且还不会污染全局变量，是很好的设计模式。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Angular1依赖注入的方法"><span class="nav-number"></span> <span class="nav-text">Angular1依赖注入的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如果没有明确的声明，Angular1会假定名称就是依赖的名称。因此，它会在内部调用函数对象的toString-方法，分析并提取函数的参数列表，然后通过-injector将这些参数再注入进对象实例。下面是代码示例："><span class="nav-number">1.</span> <span class="nav-text">如果没有明确的声明，Angular1会假定名称就是依赖的名称。因此，它会在内部调用函数对象的toString()方法，分析并提取函数的参数列表，然后通过$injector将这些参数再注入进对象实例。下面是代码示例：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建了一个可以自动更新时间的应用，看看是如何进行依赖注入的。通过设置参数-scope和-timeout，angular1会在内部调用函数的toString-方法，分析并提取函数的参数列表，然后通过-injector将这些参数注入到对象的实例。"><span class="nav-number">2.</span> <span class="nav-text">创建了一个可以自动更新时间的应用，看看是如何进行依赖注入的。通过设置参数$scope和$timeout，angular1会在内部调用函数的toString()方法，分析并提取函数的参数列表，然后通过$injector将这些参数注入到对象的实例。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显式的明确定义一个函数在被调用时需要用到的依赖关系，通过这种方法声明依赖，即使在源代码被压缩，参数名称发生改变的情况下依然可以工作。代码示例："><span class="nav-number">3.</span> <span class="nav-text">显式的明确定义一个函数在被调用时需要用到的依赖关系，通过这种方法声明依赖，即使在源代码被压缩，参数名称发生改变的情况下依然可以工作。代码示例：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显式的将我们需要的依赖注入到函数中，所以在函数中参数也可以分别换成其他字段。"><span class="nav-number">4.</span> <span class="nav-text">显式的将我们需要的依赖注入到函数中，所以在函数中参数也可以分别换成其他字段。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#angular1提供的行内注入方法实际上是一种语法糖，它与前面的提到的通过-inject属性进行声明的原理是一样的，但是允许我们在函数定义的时候从行内将参数传入，这种方法方便简洁，而且避免了在定义的过程中使用临时变量。"><span class="nav-number">5.</span> <span class="nav-text">angular1提供的行内注入方法实际上是一种语法糖，它与前面的提到的通过$inject属性进行声明的原理是一样的，但是允许我们在函数定义的时候从行内将参数传入，这种方法方便简洁，而且避免了在定义的过程中使用临时变量。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下面来对比一下ng1与ng2的依赖注入的区别，以login组件为例"><span class="nav-number"></span> <span class="nav-text">下面来对比一下ng1与ng2的依赖注入的区别，以login组件为例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#先来看一下angular2的架构图"><span class="nav-number"></span> <span class="nav-text">先来看一下angular2的架构图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在这里直接把login组件绑定在login-service上的，很难进行独立测试，也降低了它复用的可能性"><span class="nav-number">1.</span> <span class="nav-text">在这里直接把login组件绑定在login service上的，很难进行独立测试，也降低了它复用的可能性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#with-DI"><span class="nav-number"></span> <span class="nav-text">with DI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在构造函数里面注射一个LoginService的实例，而不是直接创建"><span class="nav-number">1.</span> <span class="nav-text">在构造函数里面注射一个LoginService的实例，而不是直接创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#我们还需要告诉框架应该创建这个service的实例"><span class="nav-number">2.</span> <span class="nav-text">我们还需要告诉框架应该创建这个service的实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同样，在构造函数里面注射一个LoginSerivce的实例"><span class="nav-number">3.</span> <span class="nav-text">同样，在构造函数里面注射一个LoginSerivce的实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果注入到它的根模块，则整个应用都可以调用，也可以注入到使用它的组件元数据里面-只需在装饰器加上一个providers配置项-这样注入的服务只对自己和后代可用"><span class="nav-number">4.</span> <span class="nav-text">如果注入到它的根模块，则整个应用都可以调用，也可以注入到使用它的组件元数据里面,只需在装饰器加上一个providers配置项,这样注入的服务只对自己和后代可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ng1里面有好几个Api可以用来给指令注入依赖，有些是根据名称注入的（LoginService）-有些依赖会一直自动提供（link函数里面的），有些需要使用require进行配置"><span class="nav-number">5.</span> <span class="nav-text">ng1里面有好几个Api可以用来给指令注入依赖，有些是根据名称注入的（LoginService）,有些依赖会一直自动提供（link函数里面的），有些需要使用require进行配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ng2提供了统一的Api用来注入服务，指令等，所有这些内容都会被注入到组件的构造函数里面"><span class="nav-number">6.</span> <span class="nav-text">ng2提供了统一的Api用来注入服务，指令等，所有这些内容都会被注入到组件的构造函数里面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XF2E</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xf2e"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = false;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title >= 0 || index_content >= 0 ){
+                                isMatch = true;
+								if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            } 
+							
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("drOtCxa0pfVstUT7nX2AEscw-gzGzoHsz", "pr8nSESJHyoCkb5Qd6WPwni1");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
